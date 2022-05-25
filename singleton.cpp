@@ -1,7 +1,10 @@
 #include <iostream>
 #include <mutex>
 #include <pthread.h>
+
+
 using namespace std;
+pthread_mutex_t lock1;
 
 template <typename T>
 class Singleton
@@ -24,7 +27,11 @@ Singleton<T> *Singleton<T>::Instance(T temp)
 
     if (my_instance == 0)
     {
-        my_instance = new Singleton(temp);
+        pthread_mutex_lock(&lock1);
+        if(my_instance==NULL){
+            my_instance = new Singleton(temp);
+        }
+        pthread_mutex_unlock(&lock1);
     }
 
     return my_instance;

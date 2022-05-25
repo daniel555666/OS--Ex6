@@ -55,13 +55,13 @@ void enQ(pqueue Q, void *n)
 {
     pthread_mutex_lock(&Q->lock);
     pnode newN = newNode(n);
-    if (!isEmpty(Q))
+    if (isEmpty(Q))
     {
-        Q->start->prev = newN;
+        Q->end = newN;
     }
     else
     {
-        Q->end = newN;
+        Q->start->prev = newN;
     }
     newN->next = Q->start;
     Q->start = newN;
@@ -70,6 +70,11 @@ void enQ(pqueue Q, void *n)
 void *deQ(pqueue Q)
 {
     pthread_mutex_lock(&Q->lock);
+    if (isEmpty(Q))
+    {
+        perror("The queue is empty!");
+    }
+    
     if (Q->start == Q->end)
     {
         pnode temp = Q->start;
@@ -94,6 +99,6 @@ void destoryQ(pqueue Q)
         void *temp = deQ(Q);
         free(temp);
     }
-    pthread_mutex_destroy(&Q->lock);
     free(Q);
+    pthread_mutex_destroy(&Q->lock);
 }

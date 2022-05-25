@@ -32,6 +32,7 @@ int main(int argc, char const *argv[])
     int id1 = 1, id2 = 2;
     pthread_create(&thread1, NULL, &myThreadFun, &id1);
     pthread_create(&thread2, NULL, &myThreadFun, &id2);
+
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
 
