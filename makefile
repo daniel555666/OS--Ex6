@@ -22,7 +22,10 @@ reactor: pollserver.o
 
 clientr: pollclient.o
 	$(CC) $<  -o clientr $(FLAGS)
-
+test: autoClient test.o
+	$(CC) test.o -o test
+autoClient: autoClient.o
+	$(CC) $< -o autoClient
 %.o: %.c
 	$(CC) -c $< -o $@
 

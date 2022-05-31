@@ -1,3 +1,7 @@
+/*
+** client.c -- a stream socket client demo
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,7 +16,7 @@
 
 #define PORT "3490" // the port client will be connecting to
 
-#define MAXDATASIZE 100 // max number of bytes we can get at once
+#define MAXDATASIZE 1024 // max number of bytes we can get at once
 
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr(struct sockaddr *sa)
@@ -26,6 +30,8 @@ void *get_in_addr(struct sockaddr *sa)
 
 int main(int argc, char *argv[])
 {
+    char *commands[4] = {"PUSH DANIEL", "PUSH DVIR", "POP", "TOP"};
+
     int sockfd, numbytes;
     char buf[MAXDATASIZE];
     struct addrinfo hints, *servinfo, *p;
@@ -80,10 +86,11 @@ int main(int argc, char *argv[])
 
     freeaddrinfo(servinfo); // all done with this structure
     strcpy(buf, "Start");
-    while (strcmp(buf, "EXIT"))
+    for (size_t i = 0; i < 30; i++)
     {
-        printf("INPUT> ");
-        gets(buf);
+        
+        strcpy(buf, commands[rand() % 4]);
+        printf("INPUT> %s \n", buf);
         if (send(sockfd, buf, strlen(buf), 0) == -1)
         {
             perror("send");
@@ -93,7 +100,7 @@ int main(int argc, char *argv[])
         {
             break;
         }
-        
+
         if ((numbytes = recv(sockfd, buf, MAXDATASIZE - 1, 0)) == -1)
         {
             perror("recv");
@@ -102,9 +109,12 @@ int main(int argc, char *argv[])
         buf[numbytes] = '\0';
         printf("OUTPUT> %s\n", buf);
     }
-
-    printf("client: received '%s'\n", buf);
-
+    strcpy(buf, "EXIT");
+    if (send(sockfd, buf, strlen(buf), 0) == -1)
+    {
+        perror("send");
+        exit(1);
+    }
     close(sockfd);
 
     return 0;
