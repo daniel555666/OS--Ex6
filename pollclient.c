@@ -41,7 +41,7 @@ void *recvFunc(void *arg)
             connected = 0;
             break;
         }
-        printf("GET> %s\n",buff);
+        printf("\nGET> %s\n",buff);
         if (!strcmp(buff, "exit"))
         {
             connected = 0;
@@ -56,8 +56,10 @@ void *sendFunc(void *arg)
     char input[1024] = {0};
     while (connected != 0)
     {
+        
+        printf("SEND>");
         gets(input);
-        printf("SEND> %s\n",input);
+        // printf("\n",);
         if (strncmp(input,"exit",4) == 0)
         {
             send(sockfd,"exit",4,0);
@@ -122,19 +124,20 @@ int main(int argc, char *argv[])
 
     freeaddrinfo(servinfo); // all done with this structure
 
-    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
-        perror("recv");
-        exit(1);
-    }
+    // if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+    //     perror("recv");
+    //     exit(1);
+    // }
 
     pthread_t pair_threads[2];
     connected = 1;
     pthread_create(&pair_threads[0], NULL, recvFunc, NULL);
     pthread_create(&pair_threads[1], NULL, sendFunc, NULL);
     // pthread_join(pair_threads[0], NULL);
-    pthread_join(pair_threads[1], NULL);
+    pthread_join(pair_threads[0], NULL);
+    pthread_join(pair_threads[0], NULL);
     pthread_kill(pair_threads[1], 0);
-
+    pthread_kill(pair_threads[1], 0);
     close(sockfd);
     printf("The client send 'exit' and turn off\n");
     return 0;

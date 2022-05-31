@@ -118,7 +118,7 @@ void *myTreadFunc(void *arg)
 {
     preqests req = &((preqests)arg)[0];
     int  newFd = req->fileID;
-    char buf[256]; // Buffer for client data
+    char buf[1024]; // Buffer for client data
     for(;;)
     {
         int bytes = recv(newFd, buf, sizeof(buf), 0);

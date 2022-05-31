@@ -43,7 +43,7 @@ void newAo(p_active_object ao)
     while (1)
     {
         v++;
-    printf("newao whilee---%d\n", v);
+        printf("newao whilee---%d\n", v);
         // active func 1
         pq_obj obj2 = ao->func1(deQ(ao->Q));
         // active func 2

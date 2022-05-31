@@ -45,12 +45,12 @@ pqueue createQ()
         perror("malloc pqueue");
         exit(0);
     }
-    if (pthread_mutex_init(&newQ->lock, NULL) != 0)
+    if (pthread_mutex_init(&(newQ->lock), NULL) != 0)
     {
         perror("mutex init failed");
         exit(0);
     }
-    if (pthread_cond_init(&newQ->mutex_wait, NULL) != 0)
+    if (pthread_cond_init(&(newQ->mutex_wait), NULL) != 0)
     {
         perror("cond_init failed");
         exit(0);
@@ -117,5 +117,6 @@ void destoryQ(pqueue Q)
         free(temp);
     }
     free(Q);
+    pthread_cond_destroy(&(Q->mutex_wait));
     pthread_mutex_destroy(&(Q->lock));
 }
