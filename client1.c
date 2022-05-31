@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
         printf("OUTPUT> %s\n", buf);
     }
 
-    // printf("client: received '%s'\n", buf);
+    printf("client: received '%s'\n", buf);
 
     close(sockfd);
 

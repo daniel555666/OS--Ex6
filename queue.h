@@ -62,7 +62,8 @@ pqueue createQ()
     return newQ;
 }
 void enQ(pqueue Q, void *n)
-{   printf("-in enq\n");
+{   
+    printf("-in enq\n");
     pthread_mutex_lock(&(Q->lock));
     pnode newN = newNode(n);
     if (isEmpty(Q))
@@ -77,20 +78,22 @@ void enQ(pqueue Q, void *n)
     Q->start = newN;
     pthread_cond_signal(&(Q->mutex_wait));
     pthread_mutex_unlock(&(Q->lock));
+    printf("-out enq\n");
 
 }
 void *deQ(pqueue Q)
 {   
     printf("in deq\n");
-    pthread_mutex_lock(&(Q->lock));
-    printf("after the lock\n");
+    
     if (isEmpty(Q))
     {
         perror("The queue is empty!,we use cond when waiting\n");
         pthread_cond_wait(&(Q->mutex_wait), &(Q->lock));
+        pthread_mutex_unlock(&(Q->lock));
         printf("after cond\n");
     }
-
+    pthread_mutex_lock(&(Q->lock));
+    printf("after the lock\n");
     if (Q->start == Q->end)
     {
         pnode temp = Q->start;
@@ -106,7 +109,6 @@ void *deQ(pqueue Q)
     Q->end = endN->prev;
     free(endN);
     pthread_mutex_unlock(&(Q->lock));
-
     return res;
 }
 void destoryQ(pqueue Q)

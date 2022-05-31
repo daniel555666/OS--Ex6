@@ -39,7 +39,7 @@ typedef struct q_obj
 
 void newAo(p_active_object ao)
 {
-    
+
     while (1)
     {
         v++;
@@ -47,7 +47,7 @@ void newAo(p_active_object ao)
         // active func 1
         pq_obj obj2 = ao->func1(deQ(ao->Q));
         // active func 2
-        printf("%s-newao\n",obj2->word);
+        printf("%s-newao\n", obj2->word);
         ao->func2(obj2);
     }
 }
@@ -78,7 +78,7 @@ void *Caesar(pq_obj obj1)
             obj1->word[i] = 'A';
         }
     }
-    printf("csare - %s\n",obj1->word);
+    printf("csare - %s\n", obj1->word);
     return obj1;
 }
 void *change_char(pq_obj obj1)
@@ -97,7 +97,7 @@ void *change_char(pq_obj obj1)
     }
     return obj1;
 }
-void* send_answer(pq_obj obj1)
+void *send_answer(pq_obj obj1)
 {
     printf("send?\n");
     if (send(obj1->fd, obj1->word, strlen(obj1->word), 0) == -1)
@@ -105,7 +105,7 @@ void* send_answer(pq_obj obj1)
         perror("send");
         exit(1);
     }
-    
+
     return obj1;
 }
 void pipe1(pq_obj pq_obj1)
@@ -117,7 +117,8 @@ void pipe2(pq_obj pq_obj2)
 
     enQ(ao3->Q, pq_obj2);
 }
-void none(pq_obj pq_obj1){
+void none(pq_obj pq_obj1)
+{
     printf("was in none\n");
 }
 
@@ -151,6 +152,8 @@ void *myThreadFun(int new_fd)
         printf("GET: %s\n", buf);
         if (!strncmp(buf, "EXIT", 4))
         {
+            printf("Colse %d\n", new_fd);
+            close(new_fd);
             break;
         }
         // קיבלתבת מידע
@@ -167,11 +170,8 @@ void *myThreadFun(int new_fd)
         q_obj1->fd = new_fd;
 
         enQ(ao1->Q, q_obj1);
-        //work!
-
+        // work!
     }
-    printf("Colse %d\n", new_fd);
-    close(new_fd);
     return NULL;
 }
 
@@ -186,13 +186,12 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
-
 int main(void)
 {
     ao1 = (active_object *)malloc(sizeof(active_object));
     ao2 = (active_object *)malloc(sizeof(active_object));
     ao3 = (active_object *)malloc(sizeof(active_object));
-    
+
     printf("heyyy1\n");
     ao1->func1 = &Caesar;
     printf("heyyy2\n");
@@ -200,20 +199,17 @@ int main(void)
     ao1->func2 = pipe1;
 
     ao1->Q = createQ();
-    ao1->pid = (pthread_t *)malloc(sizeof(pthread_t));
     ao2->func1 = (pfunc)change_char;
     ao2->func2 = (pfunc)pipe2;
-    ao2->pid = (pthread_t *)malloc(sizeof(pthread_t));
     ao2->Q = createQ();
     ao3->func1 = (pfunc)send_answer;
-    ao3->pid = (pthread_t *)malloc(sizeof(pthread_t));
     ao3->Q = createQ();
-    ao3->func2=none;
+    ao3->func2 = none;
     printf("heyyy\n");
 
-    pthread_create((ao1->pid), NULL, newAo, ao1); //        pthread_create(&th, NULL, myThreadFun, new_fd);
-    pthread_create(ao2->pid, NULL, newAo, ao2);
-    pthread_create(ao3->pid, NULL, newAo, ao3);
+    pthread_create(&(ao1->pid), NULL, newAo, ao1); //        pthread_create(&th, NULL, myThreadFun, new_fd);
+    pthread_create(&(ao2->pid), NULL, newAo, ao2);
+    pthread_create(&(ao3->pid), NULL, newAo, ao3);
 
     int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
     struct addrinfo hints, *servinfo, *p;
